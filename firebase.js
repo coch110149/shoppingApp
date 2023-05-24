@@ -3,14 +3,14 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 const firebassConfig ={
-    apiKey: "AIzaSyARUnkB8NpvI9M50c5e02jiU3qwAO9EjS0",
-    authDomain: "shoppingapp-9155e.firebaseapp.com",
-    databaseURL: "https://shoppingapp-9155e-default-rtdb.firebaseio.com",
-    projectId: "shoppingapp-9155e",
-    storageBucket: "shoppingapp-9155e.appspot.com",
-    messagingSenderId: "115456964416",
-    appId: "1:115456964416:web:5daa92ce0115214ec1aca5",
-    measurementId: "G-W2KW80TWYB"
+    apiKey:process.env.REACT_APP_FIREBASE_API_KEY  ,
+    authDomain:process.env.REACT_APP_FIREBASE_AUTH_DOMAIN ,
+    databaseURL:process.env.REACT_APP_FIREBASE_DATABASE_URL ,
+    projectId:process.env.REACT_APP_FIREBASE_PROJECT_ID ,
+    storageBucket:process.env.REACT_APP_FIREBASE_STORAGE_BUCKET ,
+    messagingSenderId:process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID ,
+    appId:process.env.REACT_APP_FIREBASE_APP_ID ,
+    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 firebase.initializeApp(firebassConfig);
