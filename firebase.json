@@ -1,7 +1,6 @@
 {
   "functions": {
-    "source": "functions",
-    "ignore": ["remoteconfig.template.json"]
+    "source": "functions"
   },
   "emulators": {
     "auth": {
