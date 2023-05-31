@@ -50,15 +50,8 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          <Route
-            path="/auth"
-            render={(props) => <AuthPage {...props} user={user} />}
-          />
-          {user ? (
-            <Route path="/meals" component={MealList} />
-          ) : (
-            <Redirect exact from="/" to="/auth" />
-          )}
+          <Route path="/meals" component={MealList} />
+           <Route path="/auth" render={(props) => <AuthPage {...props} setUser={setUser} />} />
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>

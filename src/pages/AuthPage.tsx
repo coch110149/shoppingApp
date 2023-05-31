@@ -4,7 +4,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 
 import { IonButton, IonContent, IonHeader, IonInput, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/react";
 
-const AuthPage = ({user}) => {
+const AuthPage = ({setUser}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [authMode, setAuthMode] = useState('login');
@@ -21,8 +21,8 @@ const AuthPage = ({user}) => {
         try {
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    user = userCredential.user;
-                    console.log(user);
+                    setUser(userCredential.user);
+                    console.log(userCredential.user)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -37,7 +37,7 @@ const AuthPage = ({user}) => {
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Signed in 
-                    user = userCredential.user;
+                    setUser(userCredential.user)
                     // ...
                 })
                 .catch((error) => {
