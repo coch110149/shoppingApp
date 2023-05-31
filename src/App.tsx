@@ -46,12 +46,24 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+  const mealListRout = <><Route  path="/meals" component={MealList}/> <Redirect exact from='/' to="/meals"/> </>
+  const authPageRoute = <><Route  path ="/auth" render={(props) => <AuthPage {...props} setUser={setUser} />}/></>
+
   return (
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          <Route path="/meals" component={MealList} />
-           <Route path="/auth" render={(props) => <AuthPage {...props} setUser={setUser} />} />
+        {user !== null ? (
+            <>
+              <Route path="/meals" component={MealList} />
+              <Redirect exact from="/" to="/meals" />
+            </>
+          ) : (
+            <>
+              <Route path="/auth" render={(props) => <AuthPage {...props} setUser={setUser} />} />
+              <Redirect exact from="/" to="/auth" />
+            </>
+          )}
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
