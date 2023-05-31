@@ -1,0 +1,11 @@
+{
+  "projects": {
+    "default": "shoppingapp-9155e"
+  },
+  "targets": {},
+  "etags": {
+    "shoppingapp-9155e": {
+      "extensionInstances": {}
+    }
+  }
+}
