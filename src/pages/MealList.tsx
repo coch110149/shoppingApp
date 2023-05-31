@@ -1,16 +1,39 @@
 import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react"
 import { add } from "ionicons/icons";
+import {addMeal, fetchMeals} from '../firebaseService';
+import { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 
-const dummyMealData = [
-    { id: 1, title: 'Spaghetti Bolognese', numIngredients: 7, timeToComplete: 40 },
-    { id: 2, title: 'Chicken Stir Fry', numIngredients: 6, timeToComplete: 25 },
-    { id: 3, title: 'Veggie Pizza', numIngredients: 9, timeToComplete: 35 },
-    { id: 4, title: 'Grilled Salmon', numIngredients: 4, timeToComplete: 20 },
-    { id: 5, title: 'Beef Tacos', numIngredients: 5, timeToComplete: 30 },
-  ];
+
+interface Meal {
+    id: number;
+    title: string;
+    numIngredients: number;
+    timeToComplete: number;
+}
 
 const MealList = () => {
-    console.log("here")
+    const history = useHistory();
+    const [meals,setMeals] = useState<Meal[]>([]);
+
+    useEffect(() => {
+        const fetchMealsFromDataBase = async () => {
+            const fetchedMeals = await fetchMeals();
+            if(fetchedMeals) {
+                const mealsArray: Meal[] = Object.values(fetchedMeals);
+                setMeals(mealsArray);
+            }
+        };
+
+        fetchMealsFromDataBase();
+    }, []);
+
+    const handleAddMeal = () => {
+        const newMeal = {};
+        history.push("/meals/add")
+        addMeal(newMeal);
+    };
+
     return (
         <IonPage>
             <IonHeader>
@@ -20,7 +43,7 @@ const MealList = () => {
             </IonHeader>
             <IonContent>
                 <IonList>
-                    {dummyMealData.map((meal) => (
+                    {meals.map((meal) => (
                         <IonItem key={meal.id}>
                             <IonLabel>
                                 <h2>{meal.title}</h2>
@@ -31,7 +54,7 @@ const MealList = () => {
                 </IonList>
 
                 <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton routerLink="/meals/add">
+                    <IonFabButton onClick ={handleAddMeal}>
                         <IonIcon icon={add} />
                     </IonFabButton>
                 </IonFab>

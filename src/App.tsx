@@ -33,7 +33,6 @@ setupIonicReact();
 
 
 import { getAuth, onAuthStateChanged  } from 'firebase/auth';
-import { getFirestore} from 'firebase/firestore';
 import AuthPage from './pages/AuthPage';
 
 const App: React.FC = () => {
@@ -46,9 +45,6 @@ const App: React.FC = () => {
 
     return () => unsubscribe();
   }, []);
-
-  const mealListRout = <><Route  path="/meals" component={MealList}/> <Redirect exact from='/' to="/meals"/> </>
-  const authPageRoute = <><Route  path ="/auth" render={(props) => <AuthPage {...props} setUser={setUser} />}/></>
 
   return (
     <IonApp>
