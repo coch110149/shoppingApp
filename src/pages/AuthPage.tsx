@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react"
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { useHistory } from "react-router-dom";
 
 
 import { IonButton, IonContent, IonHeader, IonInput, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/react";
 
-const AuthPage = ({user}) => {
+const AuthPage = ({setUser}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [authMode, setAuthMode] = useState('login');
+    const [authMode, setAuthMode] = useState('login');    
     const auth = getAuth();
+    const history = useHistory();
 
 
     const handleAuthModeChange = (mode: string | undefined) => {
@@ -21,8 +23,8 @@ const AuthPage = ({user}) => {
         try {
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    user = userCredential.user;
-                    console.log(user);
+                    setUser(userCredential.user);
+                    history.push('/meals')
                 })
                 .catch((error) => {
                     console.log(error)
@@ -37,7 +39,8 @@ const AuthPage = ({user}) => {
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Signed in 
-                    user = userCredential.user;
+                    setUser(userCredential.user)
+                    history.push('/meals')
                     // ...
                 })
                 .catch((error) => {
