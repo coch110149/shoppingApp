@@ -1,4 +1,5 @@
-import { IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react"
+import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react"
+import { add } from "ionicons/icons";
 
 const dummyMealData = [
     { id: 1, title: 'Spaghetti Bolognese', numIngredients: 7, timeToComplete: 40 },
@@ -28,6 +29,12 @@ const MealList = () => {
                         </IonItem>
                     ))}
                 </IonList>
+
+                <IonFab vertical="bottom" horizontal="end" slot="fixed">
+                    <IonFabButton routerLink="/meals/add">
+                        <IonIcon icon={add} />
+                    </IonFabButton>
+                </IonFab>
             </IonContent>
         </IonPage>
     )

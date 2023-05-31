@@ -43,7 +43,13 @@ const AddEditPage: React.FC = () => {
                             onIonChange={(e) => setServings(e.detail.value!)}
                         />
                     </IonItem>
-
+                    <IonItem>
+                        <IonLabel position="stacked">Cost</IonLabel>
+                        <IonInput
+                            type="number"
+                            value={mealCost}
+                            onIonChange={(e) => setMealCost(e.detail.value!)}
+                        ></IonInput></IonItem>
                     <IonItem>
                         <IonLabel position="stacked">Price per Serving</IonLabel>
                         <IonInput
@@ -62,12 +68,11 @@ const AddEditPage: React.FC = () => {
                     </IonItem>
 
                     {/* Add an image upload component here */}
-
-                </IonList>
-
-                <IonButton expand="full" type="submit">Save</IonButton>
-            </form>
-        </IonContent>
+                    <IonButton expand="full" type="submit">Save</IonButton>
+                </form>
+            </IonContent>
         </IonPage >
     )
 }
+
+export default AddEditPage;
