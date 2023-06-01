@@ -1,13 +1,21 @@
 import { getFirebaseDatabase } from './firebaseConfig';
 import { getDatabase, ref, push, set, onValue } from 'firebase/database';
-
+import {Meal} from './pages/MealList';
 const db = getFirebaseDatabase();
 
 // Add a meal to the database
 export const addMeal = (mealData: any) => {
-  const mealsRef = ref(db, 'meals');
-  const newMealsRef = push(mealsRef);
-  set(newMealsRef, mealData);
+    return new Promise<void>((resolve, reject) => {
+      const mealsRef = ref(db, 'meals');
+      const newMealsRef = push(mealsRef);
+      set(newMealsRef, mealData)
+      .then(() => {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);      
+    });
+  });
 };
 
 export const fetchMeals = async () => {
@@ -16,8 +24,12 @@ export const fetchMeals = async () => {
     onValue(
       mealsRef,
       (snapshot) => {
-        const meals = snapshot.val();
-        // Process the meals data as needed
+        const meals: Record<string, Meal> = {};
+        snapshot.forEach((childSnapshot) => {
+          const mealId = childSnapshot.key as string;
+          const mealData = childSnapshot.val();
+          meals[mealId] = {...mealData, id: mealId};
+        });
         resolve(meals);
       },
       (error) => {

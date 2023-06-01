@@ -1,7 +1,14 @@
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonList, IonPage, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { useState } from "react";
+import { addMeal, fetchMeals } from '../firebaseService'
+import { useHistory } from "react-router-dom";
+import {Meal} from './MealList'
 
-const AddEditPage: React.FC = () => {
+interface AddEditPageProps {
+    updateMealList: () => void;
+}
+
+const AddEditPage: React.FC<AddEditPageProps> = ({updateMealList}) => {
     const [name, setName] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [servings, setServings] = useState('');
@@ -9,8 +16,26 @@ const AddEditPage: React.FC = () => {
     const [pricePerServing, setPricePerServing] = useState('');
     const [directions, setDirections] = useState('');
 
-    const handleFormSubmit = () => {
+    const history = useHistory();
 
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const mealData = {
+            name: name,
+            ingredients: ingredients,
+            servings: servings,
+            mealCost: mealCost,
+            directions: directions
+        };
+        
+        try {
+            await addMeal(mealData);
+            history.push("/meals");
+            
+        }catch(error){
+            console.error(error);
+        }
     };
 
     return (

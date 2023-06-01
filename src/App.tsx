@@ -52,9 +52,9 @@ const App: React.FC = () => {
         <IonRouterOutlet>
         {user ? (
             <>
-              <Route path="/meals" component={MealList} />
-              <Route path="/meals/add" component={AddEditPage} />
-              <Route path= "/meals/edit/:id" component={AddEditPage}/>
+              <Route exact path="/meals" component={MealList} />
+              <Route exact path="/meals/add" component={AddEditPage} />
+              <Route exact path= "/meals/edit/:id" component={AddEditPage}/>
               <Redirect exact from="/" to="/meals" />
             </>
           ) : (
