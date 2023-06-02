@@ -13,7 +13,7 @@ ShoppingApp is a cross-platform mobile application built using the Ionic framewo
 
 - Framework: Ionic, a popular framework for developing cross-platform mobile applications using web technologies like Angular and Cordova.
 - Frontend: HTML, CSS, and TypeScript.
-- Backend: [Specify your backend technology]
+- Backend: Firebase
 
 ## Getting Started
 
@@ -21,7 +21,6 @@ To get started with the ShoppingApp:
 
 1. Clone the repository: `git clone <repository URL>`
 2. Install dependencies: `npm install`
-3. [Add any additional steps to set up the project, e.g., configuring environment variables, running migrations, etc.]
 4. Run the app locally: `ionic serve`
 
 ## Contributing
