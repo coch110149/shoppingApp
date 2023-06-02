@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from "firebase/auth";
 import { useHistory } from "react-router-dom";
 
 
 import { IonButton, IonContent, IonHeader, IonInput, IonLabel, IonPage, IonSegment, IonSegmentButton, IonTitle, IonToolbar } from "@ionic/react";
 
-const AuthPage = ({setUser}) => {
+const AuthPage = ({setUser} : {setUser: (value:User) => void}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [authMode, setAuthMode] = useState('login');    

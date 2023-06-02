@@ -1,6 +1,7 @@
-import { initializeApp } from 'firebase/app';
+import * as firebase from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
+
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,11 +14,11 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-let app = null;
+let app: firebase.FirebaseApp | null = null;
 
 export const initializeFirebase = () => {
   if (!app) {
-    app = initializeApp(firebaseConfig);
+    app = firebase.initializeApp(firebaseConfig);
   }
   return app;
 };
@@ -27,4 +28,7 @@ export const getFirebaseAuth = () => {
   return getAuth(app);
 };
 
-export const firestore = getFirestore;
+export const getFirebaseDatabase = () => {
+  const app = initializeFirebase();
+  return getDatabase(app);
+};

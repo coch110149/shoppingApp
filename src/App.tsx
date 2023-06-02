@@ -1,11 +1,12 @@
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, IonFab, IonFabButton, IonIcon, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { initializeFirebase } from './firebaseConfig';
 initializeFirebase();
 import { useEffect, useState } from 'react';
 import 'firebase/auth';
 import { User } from 'firebase/auth';
+import AddEditPage from './pages/AddEditPage';
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -32,7 +33,6 @@ setupIonicReact();
 
 
 import { getAuth, onAuthStateChanged  } from 'firebase/auth';
-import { getFirestore} from 'firebase/firestore';
 import AuthPage from './pages/AuthPage';
 
 const App: React.FC = () => {
@@ -46,16 +46,15 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const mealListRout = <><Route  path="/meals" component={MealList}/> <Redirect exact from='/' to="/meals"/> </>
-  const authPageRoute = <><Route  path ="/auth" render={(props) => <AuthPage {...props} setUser={setUser} />}/></>
-
   return (
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-        {user !== null ? (
+        {user ? (
             <>
-              <Route path="/meals" component={MealList} />
+              <Route exact path="/meals" component={MealList} />
+              <Route exact path="/meals/add" component={AddEditPage} />
+              <Route exact path= "/meals/edit" component={AddEditPage}/>
               <Redirect exact from="/" to="/meals" />
             </>
           ) : (
@@ -66,6 +65,7 @@ const App: React.FC = () => {
           )}
         </IonRouterOutlet>
       </IonReactRouter>
+
     </IonApp>
   );
   
