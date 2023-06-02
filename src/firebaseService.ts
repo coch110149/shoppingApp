@@ -1,6 +1,8 @@
 import { getFirebaseDatabase } from './firebaseConfig';
-import { getDatabase, ref, push, set, onValue } from 'firebase/database';
+import { getDatabase, ref, push, set, onValue, remove } from 'firebase/database';
 import {Meal} from './pages/MealList';
+import { resolve } from 'path';
+import { rejects } from 'assert';
 const db = getFirebaseDatabase();
 
 // Add a meal to the database
@@ -36,5 +38,32 @@ export const fetchMeals = async () => {
         reject(error);
       }
     );
+  });
+};
+
+
+export const deleteMeal = async (mealId: number) => {
+  try {
+    const mealRef = ref(db, `meals/${mealId}`);
+    await remove(mealRef);
+    console.log("Meal deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting meal:", error);
+    throw error;
+  }
+};
+
+export const editMeal = (mealData: Meal) => {
+  return new Promise<void>((resolve, reject) => {
+    const mealId = mealData.id;
+    const mealRef = ref(db, `meals/${mealId}`);
+
+    set(mealRef, mealData)
+      .then(()=> {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 };

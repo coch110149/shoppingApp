@@ -1,22 +1,37 @@
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonList, IonPage, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
-import { useState } from "react";
-import { addMeal, fetchMeals } from '../firebaseService'
-import { useHistory } from "react-router-dom";
-import {Meal} from './MealList'
+import { useEffect, useState } from "react";
+import { addMeal, editMeal, fetchMeals } from '../firebaseService'
+import { useHistory, useLocation } from "react-router-dom";
+import { Meal } from './MealList'
 
 interface AddEditPageProps {
     updateMealList: () => void;
 }
 
-const AddEditPage: React.FC<AddEditPageProps> = ({updateMealList}) => {
+const AddEditPage: React.FC<AddEditPageProps> = ({ updateMealList }) => {
     const [name, setName] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [servings, setServings] = useState('');
     const [mealCost, setMealCost] = useState('');
     const [pricePerServing, setPricePerServing] = useState('');
     const [directions, setDirections] = useState('');
+    const [mode, setMode] = useState<'add' | 'edit'>('add');
 
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(() => {
+        const state = location.state as { meal: Meal };
+        if (state && state.meal) {
+            const meal: Meal = state.meal;
+            setName(meal.name || '');
+            setIngredients(meal.ingredients || '');
+            setServings(meal.servings || '');
+            setMealCost(meal.cost || '');
+            setDirections(meal.directions)
+            setMode('edit');
+        }
+    }, [location.state]);
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -28,12 +43,17 @@ const AddEditPage: React.FC<AddEditPageProps> = ({updateMealList}) => {
             mealCost: mealCost,
             directions: directions
         };
-        
+
         try {
-            await addMeal(mealData);
+            if (mode === 'add') {
+                await addMeal(mealData);
+            } else if (mode === 'edit') {
+                const state = location.state as { meal: Meal };
+                const meal: Meal = state.meal;
+                await editMeal({ ...meal, ...mealData })
+            }
             history.push("/meals");
-            
-        }catch(error){
+        } catch (error) {
             console.error(error);
         }
     };
@@ -47,37 +67,38 @@ const AddEditPage: React.FC<AddEditPageProps> = ({updateMealList}) => {
             </IonHeader>
             <IonContent>
                 <form onSubmit={handleFormSubmit}>
-                    <IonLabel position="stacked">Name</IonLabel>
-                    <IonInput type="text" value={name} onIonChange={(e) => setName(e.detail.value!)}
+
+                    <IonInput label="name" type="text" value={name} onIonChange={(e) => setName(e.detail.value!)}
                         required
                     />
 
                     <IonItem>
-                        <IonLabel position="stacked">Ingredients</IonLabel>
                         <IonTextarea
+                            label="Ingredients"
                             value={ingredients}
                             onIonChange={(e) => setIngredients(e.detail.value!)}
                         />
                     </IonItem>
 
                     <IonItem>
-                        <IonLabel position="stacked">Number of Servings</IonLabel>
                         <IonInput
+                            label="Number of Servings"
                             type="number"
                             value={servings}
                             onIonChange={(e) => setServings(e.detail.value!)}
                         />
                     </IonItem>
                     <IonItem>
-                        <IonLabel position="stacked">Cost</IonLabel>
                         <IonInput
+                            label="Cost"
                             type="number"
                             value={mealCost}
                             onIonChange={(e) => setMealCost(e.detail.value!)}
-                        ></IonInput></IonItem>
+                        ></IonInput>
+                    </IonItem>
                     <IonItem>
-                        <IonLabel position="stacked">Price per Serving</IonLabel>
                         <IonInput
+                            label="Price per Serving"
                             type="number"
                             value={pricePerServing}
                             onIonChange={(e) => setPricePerServing(e.detail.value!)}
@@ -85,8 +106,8 @@ const AddEditPage: React.FC<AddEditPageProps> = ({updateMealList}) => {
                     </IonItem>
 
                     <IonItem>
-                        <IonLabel position="stacked">Directions</IonLabel>
                         <IonTextarea
+                            label="Directions"
                             value={directions}
                             onIonChange={(e) => setDirections(e.detail.value!)}
                         />
