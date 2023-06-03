@@ -34,10 +34,11 @@ setupIonicReact();
 
 import { getAuth, onAuthStateChanged  } from 'firebase/auth';
 import AuthPage from './pages/AuthPage';
+import ShoppingList from './pages/ShoppingList';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(),(user: User | null) => {
       setUser(user);
@@ -56,6 +57,7 @@ const App: React.FC = () => {
               <Route exact path="/meals/add" component={AddEditPage} />
               <Route exact path= "/meals/edit" component={AddEditPage}/>
               <Redirect exact from="/" to="/meals" />
+              <Route exact path="/shoppingList" component={ShoppingList}/>              
             </>
           ) : (
             <>
@@ -65,7 +67,7 @@ const App: React.FC = () => {
           )}
         </IonRouterOutlet>
       </IonReactRouter>
-
+     
     </IonApp>
   );
   
