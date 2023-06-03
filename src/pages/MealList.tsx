@@ -1,5 +1,5 @@
-import { IonAlert, IonButton, IonCheckbox, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react"
-import { add, pencil, trash } from "ionicons/icons";
+import { IonAlert, IonButton, IonButtons, IonCheckbox, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react"
+import { add, cart, pencil, trash } from "ionicons/icons";
 import { addMeal, deleteMeal, fetchMeals } from '../firebaseService';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -50,8 +50,10 @@ const MealList: React.FC = () => {
 
     const handleAddToCookingList = () => {
         const selectedMeals = meals.filter((meal) => selectedItems.includes(meal.id));
-        setCookingList([...cookingList, ...selectedMeals]);
+        const newCookingList = Array.from(new Set([...cookingList, ...selectedMeals]));
+        setCookingList(newCookingList);
         setSelectedItems([]);
+        console.log(newCookingList);
     };
 
     const handleEditMeal = (meal: Meal) => {
@@ -91,11 +93,20 @@ const MealList: React.FC = () => {
         setShowDeleteAlert(false);
     };
 
+    const openShoppingList = () => {
+        history.push("/shoppingList", {selectedMeals:cookingList});
+    }
+
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Meal List</IonTitle>
+                    <IonButtons slot="end">
+                        <IonButton onClick={openShoppingList}>
+                            <IonIcon icon={cart} />
+                        </IonButton>
+                    </IonButtons>
                     {selectedItems.length > 0 && (
                         <IonButton onClick={handleAddToCookingList}>Add To Shopping List</IonButton>
                     )}
