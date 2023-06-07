@@ -9,6 +9,7 @@ interface AddEditPageProps {
 }
 
 const AddEditPage: React.FC<AddEditPageProps> = ({ updateMealList }) => {
+    const [mealId, setMealId] = useState<number>(-1)
     const [name, setName] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [servings, setServings] = useState('');
@@ -29,6 +30,7 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ updateMealList }) => {
             setServings(meal.servings || '');
             setMealCost(meal.cost || '');
             setDirections(meal.directions)
+            setMealId(meal.id || -1)
             setMode('edit');
         }
     }, [location.state]);
@@ -37,10 +39,11 @@ const AddEditPage: React.FC<AddEditPageProps> = ({ updateMealList }) => {
         event.preventDefault();
 
         const mealData = {
+            id: mealId,
             name: name,
             ingredients: ingredients,
             servings: servings,
-            mealCost: mealCost,
+            cost: mealCost,
             directions: directions
         };
 

@@ -1,9 +1,9 @@
 import { IonAlert, IonButton, IonButtons, IonCheckbox, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react"
 import { add, cart, pencil, trash } from "ionicons/icons";
-import { addMeal, deleteMeal, fetchMeals } from '../firebaseService';
+import { addCurrentMeals, addMeal, deleteMeal, fetchCurrentMeals, fetchMeals } from '../firebaseService';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import AddEditPage from "./AddEditPage";
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 
 export interface Meal {
@@ -20,20 +20,40 @@ const MealList: React.FC = () => {
     const [meals, setMeals] = useState<Meal[]>([]);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [expandedItems, setExpandedItems] = useState<number[]>([]);
-    const [cookingList, setCookingList] = useState<Meal[]>([]);
+    const [currentMeals, setCurrentMeals] = useState<Meal[]>([]);
     const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
     const [mealToDelete, setMealToDelete] = useState<Meal | null>(null);
+    const [currentUser, setCurentUser] = useState<any>();
+
+
 
     const fetchMealsFromDataBase = async () => {
         const fetchedMeals = await fetchMeals();
         if (fetchedMeals) {
             const mealsArray = Object.values(fetchedMeals);
             setMeals(mealsArray);
+
+            //Fetch the current meals here and mark them in the meal list
+
+            const currentMeals = await fetchCurrentMeals(currentUser.id);
+            if (currentMeals) {
+                const currentMealIds = Object.values(currentMeals);
+                setCurrentMeals(currentMealIds);
+            };
         }
     };
 
     useEffect(() => {
         fetchMealsFromDataBase();
+
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setCurentUser(user);
+                console.log("User")
+            }
+        })
+        const userID = currentUser ? currentUser.uid : null;
     }, []);
 
     const handleAddMeal = () => {
@@ -48,12 +68,12 @@ const MealList: React.FC = () => {
         }
     };
 
-    const handleAddToCookingList = () => {
+    const handleAddToCurrentMeals = () => {
         const selectedMeals = meals.filter((meal) => selectedItems.includes(meal.id));
-        const newCookingList = Array.from(new Set([...cookingList, ...selectedMeals]));
-        setCookingList(newCookingList);
+        const newCurrentMeals = Array.from(new Set([...currentMeals, ...selectedMeals]));
+        setCurrentMeals(newCurrentMeals);
         setSelectedItems([]);
-        console.log(newCookingList);
+        console.log(newCurrentMeals);
     };
 
     const handleEditMeal = (meal: Meal) => {
@@ -74,7 +94,7 @@ const MealList: React.FC = () => {
 
     const handleCheckboxChange = (mealId: number) => {
         if (selectedItems.includes(mealId)) {
-            setSelectedItems(selectedItems.filter(id => id != mealId));
+            setSelectedItems(selectedItems.filter(id => id !== mealId));
         } else {
             setSelectedItems([...selectedItems, mealId]);
         }
@@ -94,7 +114,8 @@ const MealList: React.FC = () => {
     };
 
     const openShoppingList = () => {
-        history.push("/shoppingList", {selectedMeals:cookingList});
+        addCurrentMeals(currentUser.id, currentMeals, null)
+        history.push("/shoppingList", { selectedMeals: currentMeals });
     }
 
     return (
@@ -108,7 +129,7 @@ const MealList: React.FC = () => {
                         </IonButton>
                     </IonButtons>
                     {selectedItems.length > 0 && (
-                        <IonButton onClick={handleAddToCookingList}>Add To Shopping List</IonButton>
+                        <IonButton onClick={handleAddToCurrentMeals}>Add To Shopping List</IonButton>
                     )}
                 </IonToolbar>
             </IonHeader>

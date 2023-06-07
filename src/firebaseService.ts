@@ -1,22 +1,20 @@
 import { getFirebaseDatabase } from './firebaseConfig';
-import { getDatabase, ref, push, set, onValue, remove } from 'firebase/database';
-import {Meal} from './pages/MealList';
-import { resolve } from 'path';
-import { rejects } from 'assert';
+import {ref, push, set, onValue, remove } from 'firebase/database';
+import { Meal } from './pages/MealList';
 const db = getFirebaseDatabase();
 
 // Add a meal to the database
-export const addMeal = (mealData: any) => {
-    return new Promise<void>((resolve, reject) => {
-      const mealsRef = ref(db, 'meals');
-      const newMealsRef = push(mealsRef);
-      set(newMealsRef, mealData)
+export const addMeal = (mealData: Meal) => {
+  return new Promise<void>((resolve, reject) => {
+    const mealsRef = ref(db, 'meals');
+    const newMealsRef = push(mealsRef);
+    set(newMealsRef, mealData)
       .then(() => {
         resolve();
       })
       .catch((error) => {
-        reject(error);      
-    });
+        reject(error);
+      });
   });
 };
 
@@ -30,7 +28,7 @@ export const fetchMeals = async () => {
         snapshot.forEach((childSnapshot) => {
           const mealId = childSnapshot.key as string;
           const mealData = childSnapshot.val();
-          meals[mealId] = {...mealData, id: mealId};
+          meals[mealId] = { ...mealData, id: mealId };
         });
         resolve(meals);
       },
@@ -59,7 +57,7 @@ export const editMeal = (mealData: Meal) => {
     const mealRef = ref(db, `meals/${mealId}`);
 
     set(mealRef, mealData)
-      .then(()=> {
+      .then(() => {
         resolve();
       })
       .catch((error) => {
@@ -67,3 +65,50 @@ export const editMeal = (mealData: Meal) => {
       });
   });
 };
+
+export const addCurrentMeals = (userId:string, meals: Meal[], scheduledDate: string | null) => {
+  return new Promise<void>((resolve, reject) => {
+    const currentMealsRef = ref(db, `currentMeals/${userId}`)
+
+    meals.forEach((meal) => {
+      const newMealRef = push(currentMealsRef);
+      set(newMealRef, {mealId: meal.id, scheduledDate})
+      .catch((error) => {
+        console.error(`Error Adding Current Meal: ${error}`);
+        reject(error);
+      });  
+    });
+    resolve();
+  })
+}
+
+export const fetchCurrentMeals = async (userId: string) => {
+  const currentMealsRef = ref(db, `currentMeals/${userId}`);
+  return new Promise((resolve, reject) => {
+    onValue(currentMealsRef, (snapshot) => {
+      const currentMeals: Record<string, { mealId: string; scheduledDate: string }> = {};
+      snapshot.forEach((childSnapshot) => {
+        const mealId = childSnapshot.key as string;
+        const MealData = childSnapshot.val();
+        currentMeals[mealId] = { mealId: MealData.mealId, scheduledDate: MealData.scheduleDate }
+      });
+      resolve(currentMeals);
+    },
+      (error) => {
+        reject(error);
+      }
+    )
+  })
+}
+
+export const removeCurrentMeal = async (userId:string, mealId: number) => {
+  try{
+    const currentMealsRef = ref(db, `currentMeals/${userId}/${mealId}`)
+    await remove(currentMealsRef);
+    console.info(`meal with id of ${mealId} was removed from the current meals`);
+  }catch(error) {
+    console.error(`error removing current meal: ${error}`);
+    throw error;
+  }
+
+}
